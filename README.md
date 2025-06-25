@@ -9,7 +9,8 @@
 * Most of the necessary documentation for the different puzzles are on this wiki
 * You can only use the libraries I say you can use
 * Your solutions will be publicly displayed in the repo (that means you gotta use git)
-
+## Wiki
+![Link](https://github.com/Djalcoding/Les-vacances-amusantes-de-Omar/wiki)
 ## Challenges
 There are currently 5 challenges for Omar that will get progressively harder.
 ### Command Line Caesar Cipher Program
