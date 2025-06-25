@@ -12,7 +12,12 @@
 
 ## Challenges
 There are currently 5 challenges for Omar that will get progressively harder.
-### Command Line Caesar Cypher Program
+### Command Line Caesar Cipher Program
 ![Ceasar](https://www.vcalc.com/attachments/ec5da14a-0956-11ee-b65f-bc764e203090/casesardecrypt.png)
 *Short Description* : A command line tool that takes a file and a number as an input and outputs the Caesar Cipher-encrypted version
 [[link]](https://github.com/Djalcoding/Les-vacances-amusantes-de-Omar/wiki/Caesar-Cipher-(%231))
+### Library Of Djabel
+![Djal](https://mywordsonwords.wordpress.com/wp-content/uploads/2015/10/mrs-beeton.jpg)
+
+*Short Description* : A command line tool that takes a directory and prints to the console all the files inside, sorted.
+[[link]](https://github.com/Djalcoding/Les-vacances-amusantes-de-Omar/wiki/The-Library-of-Djabel-(%232))
