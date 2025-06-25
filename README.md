@@ -21,3 +21,19 @@ There are currently 5 challenges for Omar that will get progressively harder.
 
 *Short Description* : A command line tool that takes a directory and prints to the console all the files inside, sorted.
 [[link]](https://github.com/Djalcoding/Les-vacances-amusantes-de-Omar/wiki/The-Library-of-Djabel-(%232))
+### Task Manager
+![image](https://github.com/user-attachments/assets/92408f91-a4b4-41cf-aa58-4b45bef6ed94)
+
+*Short Description* : Create a command manager [[link]](https://github.com/Djalcoding/Les-vacances-amusantes-de-Omar/wiki/Task-Manager-(%233))
+
+### Custom (and bad) Text Editor
+![image](https://github.com/user-attachments/assets/a9c027a5-55b3-48b3-b986-c6dae9f10cd3)
+
+*Short Description* : Make a simple text editor with a visual interface [[link]](https://github.com/Djalcoding/Les-vacances-amusantes-de-Omar/wiki/Custom-Text-Editor-(%234))
+
+### PID simulator
+
+![PID](https://docs.wpilib.org/fr/latest/_images/introduction-to-pid-damped-controller.png)
+
+*Short Description* : Make a class that computes the next step of a PID [[link]](https://github.com/Djalcoding/Les-vacances-amusantes-de-Omar/wiki/PID-Simulator-(%235))
+
