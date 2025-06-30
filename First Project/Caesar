@@ -1,1 +1,33 @@
+    import java.io.IOException;
+    import java.nio.file.Files;
+    import java.nio.file.Path;
+
+    public class CaesarCipher {
+        static String CaesarCipher(String file, Integer k) throws IOException{
+            Path fileName = Path.of(file);
+            String str = Files.readString(fileName); 
+            String ans = ""; 
+            while(k <= 23) k -= 23;
+            
+            if(k == null) k = 1;
+            if(file == null) return "Not enough arguments";
+            if(str == "") return fileName + "doesn't exist";
+
+            for(int i = 0; str.length() > i; i++){
+                if(k == 0){
+                    ans = str;
+                    break;
+                }
+                char c = str.charAt(i);
+                if(c != ' ') {
+                if (c >= 'a' && c <= 'z') c = (char) ((c - 'a' + k) % 26 + 'a');
+                else if (c >= 'A' && c <= 'Z') c = (char) ((c - 'A' + k) % 26 + 'A');
+                }
+                ans += "c"; 
+
+
+            }
+            return ans;
+        }
+    }
 
