@@ -4,14 +4,23 @@
 
     public class CaesarCipher {
         static String CaesarCipher(String file, Integer k) throws IOException{
-            Path fileName = Path.of(file);
-            String str = Files.readString(fileName); 
-            String ans = ""; 
-            while(k <= 23) k -= 23;
             
             if(k == null) k = 1;
-            if(file == null) return "Not enough arguments";
-            if(str == "") return fileName + "doesn't exist";
+            if (file == null) {
+                System.err.println("Not enough arguments");
+                return null; // Or: throw new IllegalArgumentException();
+            }
+            while(k >= 26) k -= 26;
+            
+            Path fileName = Path.of(file);
+            String ans = "";
+
+            if (!Files.exists(fileName)) {
+                System.err.println(file + " doesn't exist");
+                return null;
+            }
+
+            String str = Files.readString(fileName);
 
             for(int i = 0; str.length() > i; i++){
                 if(k == 0){
@@ -23,11 +32,10 @@
                 if (c >= 'a' && c <= 'z') c = (char) ((c - 'a' + k) % 26 + 'a');
                 else if (c >= 'A' && c <= 'Z') c = (char) ((c - 'A' + k) % 26 + 'A');
                 }
-                ans += "c"; 
+                ans += c; 
 
 
             }
             return ans;
         }
     }
-
