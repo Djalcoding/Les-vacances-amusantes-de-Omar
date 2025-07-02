@@ -1,41 +1,52 @@
-    import java.io.IOException;
-    import java.nio.file.Files;
-    import java.nio.file.Path;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-    public class CaesarCipher {
-        static String CaesarCipher(String file, Integer k) throws IOException{
-            
-            if(k == null) k = 1;
-            if (file == null) {
-                System.err.println("Not enough arguments");
-                return null; // Or: throw new IllegalArgumentException();
-            }
-            while(k >= 26) k -= 26;
-            
-            Path fileName = Path.of(file);
-            String ans = "";
+public class CypherTool {
 
-            if (!Files.exists(fileName)) {
-                System.err.println(file + " doesn't exist");
-                return null;
-            }
+    public static void main(String[] args) throws IOException {
 
-            String str = Files.readString(fileName);
-
-            for(int i = 0; str.length() > i; i++){
-                if(k == 0){
-                    ans = str;
-                    break;
-                }
-                char c = str.charAt(i);
-                if(c != ' ') {
-                if (c >= 'a' && c <= 'z') c = (char) ((c - 'a' + k) % 26 + 'a');
-                else if (c >= 'A' && c <= 'Z') c = (char) ((c - 'A' + k) % 26 + 'A');
-                }
-                ans += c; 
-
-
-            }
-            return ans;
+        if (args.length == 0) {
+            System.err.println("Not enough arguments");
+            return;
         }
+
+        String filename = args[0];
+        Integer k = 1;
+
+        if (args.length >= 2) {
+            k = Integer.parseInt(args[1]);
+        }
+
+        Path filePath = Path.of(filename);
+        if (!Files.exists(filePath)) {
+            System.err.println(filename + " doesn't exist");
+            return;
+        }
+
+        k %= 26;  
+        String ans = "";
+        String str = Files.readString(filePath);
+
+        for (int i = 0; i < str.length(); i++) {
+            if (k == 0) {
+                ans = str;
+                break;
+            }
+
+            char c = str.charAt(i);
+
+            if (c != ' ') {
+                if (c >= 'a' && c <= 'z') {
+                    c = (char) ((c - 'a' + k) % 26 + 'a');
+                } else if (c >= 'A' && c <= 'Z') {
+                    c = (char) ((c - 'A' + k) % 26 + 'A');
+                }
+            }
+
+            ans += c;
+        }
+
+        System.out.println(ans);
     }
+}
