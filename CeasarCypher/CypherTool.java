@@ -15,21 +15,18 @@ public class CypherTool {
         if(args.length > 2) {
             System.err.println("Too many arguments");
             return;
-        }
-
+        }   
 
         String filename = args[0];
-        try {
-            Integer.parseInt(args[1]);
-        } catch (NumberFormatException e) {
-            System.err.println("Argument 2 is not a number");
-            return;
-        }
-        
         int k = 1;
 
-        if (args.length >= 2) {
-            k = Integer.parseInt(args[1]);
+        if (args.length == 2) {
+            try {
+                k = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                System.err.println("Argument 2 is not a number");
+                return;
+            }
         }
 
         Path filePath = Path.of(filename);
