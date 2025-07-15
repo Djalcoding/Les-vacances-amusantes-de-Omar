@@ -3,39 +3,68 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Scanner;
 
 public class Editor {
+        enum Step {
+            FOLDER_SELECT,   
+            BROWSE,             
+            FILE_ACTION,         
+            READ_FILE,    
+            MODIFY_FILE,  
+            RUN_FILE,     
+            DELETE_FILE,  
+            RENAME_ITEM,         
+            CREATE_ITEM,        
+            FOLDER_ACTION,       
+            DELETE_FOLDER  
+        }
+
+
     public static void main(String[] args) {
+
         Scanner scanner = new Scanner(System.in);
-        int step = 1;  
+        Step step = Step.FOLDER_SELECT;
+        File folder;
+        Path filePath;
         String folderPath = "";
         String selectedFile = "";
+
         
         while(true){
 
             System.out.println("-----------------------------------");
-            
-            if(step == 1){
+
+            switch (step){
+
+                case FOLDER_SELECT:
+                System.out.println("Welcome to Omar new Text Editor");
+                System.out.println("Just follow the instruction we give you");
+                System.out.println("If you want to go back in yours steps just write `back` and to exit the program write `exit`");
+                System.out.println("");
                 System.out.println("Enter the folder path ");
                 String input = scanner.nextLine().trim();
-                File folder = new File(input);
+                folder = new File(input);
+
+                if(input.equals("exit")) System.exit(0);
 
                 if(folder.isDirectory()){
                     folderPath = input;
-                    step = 2;
+                    step = Step.BROWSE;
                 }
                 else{
                     System.out.println("The folder path isn't valide. Please try again");
                 }
-            }
+                break;
 
-            else if(step == 2){
-                File folder = new File(folderPath);
+                case BROWSE:
+                folder = new File(folderPath);
                 File[] files = folder.listFiles();
+
                 if (files == null) {
                     System.out.println("Cannot access files in this folder.");
-                    step = 1;
+                    step = Step.FOLDER_SELECT;
                     continue;
                 }
                     
@@ -49,13 +78,15 @@ public class Editor {
                 }
 
                 System.out.println("Write the file you wish to perform an action or write `create` to create a file or folder");
-                String input = scanner.nextLine().trim();
+                input = scanner.nextLine().trim();
+
+                if(input.equals("exit")) System.exit(0);
 
                 if(input.equals("back")){
-                    step = 1;
+                    step = Step.FOLDER_SELECT;
                 }
                 else if(input.equals("create")){
-                    step = 9;
+                    step = Step.CREATE_ITEM;
                 }
                 else{
                     File selected = new File(folderPath, input);
@@ -64,15 +95,15 @@ public class Editor {
                         System.out.println("Invalid file or folder. Try again.");
                     } else if (selected.isFile()) {
                         selectedFile = input;
-                        step = 3;
+                        step = Step.FILE_ACTION;
                     } else if (selected.isDirectory()) {
                         selectedFile = input;
-                        step = 10;
+                        step = Step.FOLDER_ACTION;
                     }
                 }
-            }
+                break;
 
-            else if(step == 3){
+                case FILE_ACTION:
                 System.out.println("What action do wish to do :");
                 System.out.println("Write `read` to read the file");
                 System.out.println("Write `modify` to change the file");
@@ -81,43 +112,45 @@ public class Editor {
                 System.out.println("Write `delete` to delete the file");
                 System.out.println("Write `back` to chose a different file");
 
-                String input = scanner.nextLine().trim();
+                input = scanner.nextLine().trim();
+
+                if(input.equals("exit")) System.exit(0);
 
                 if(input.equals("read")){
-                    step = 4;
+                    step = Step.READ_FILE;
                 }
                 else if(input.equals("modify")){
-                    step = 5;
+                    step = Step.MODIFY_FILE;
                 }
                 else if(input.equals("run")){
-                    step = 6;
+                    step = Step.RUN_FILE;
                 }
                 else if(input.equals("delete")){
-                    step = 7;
+                    step = Step.DELETE_FILE;
                 }
                 else if (input.equals("back")){
-                    step = 2;
+                    step = Step.BROWSE;
                 }
                 else if(input.equals("rename")){
-                    step = 8;
+                    step = Step.RENAME_ITEM;
                 }
-            }
+                break;
 
-            else if(step == 4){
-                Path filePath = Paths.get(folderPath, selectedFile);
+                case READ_FILE:
+                filePath = Paths.get(folderPath, selectedFile);
                 try {
                     String str = Files.readString(filePath);
                     System.out.println("This is what the file contains :");
                     System.out.println(str);
-                    step = 3;
+                    step = Step.FILE_ACTION;
                 } catch(IOException e){
                     System.out.println("This file is not compatible with this action");
-                    step = 3;
+                    step = Step.FILE_ACTION;
                 }
-            }
+                break;
 
-            else if(step == 5){
-                Path filePath = Paths.get(folderPath, selectedFile);
+                case MODIFY_FILE:
+                filePath = Paths.get(folderPath, selectedFile);
 
                 try {
                     String str = Files.readString(filePath);
@@ -125,26 +158,43 @@ public class Editor {
                     System.out.println(str);
                 } catch(IOException e){
                     System.out.println("This file is not compatible with this action");
-                    step = 3;
+                    step = Step.FILE_ACTION;
+                    break;
                 }
 
-                System.out.println("Write what you want to add to the file (it will overwrite the previous content)");
-                String input = scanner.nextLine().trim();
+                System.out.println("Do you want ot overide it or append to previous text in the file");
+                System.out.println("Write `append` to append or `override` to override");
+                String mode = scanner.nextLine().trim();
+
+                if(mode.equals("exit")) System.exit(0);
+
+                System.out.println("Write what you want to add to the file (write `END` in a line to end modification)");
+                input = scanner.nextLine().trim();
+                StringBuilder content = new StringBuilder();
+                String line;
+
+                if(input.equals("exit")) System.exit(0);
 
                 try{
-                    Files.write(filePath, input.getBytes());
+                    while (!(line = scanner.nextLine()).equals("END")) {
+                        content.append(line).append(System.lineSeparator());
+                    }
+
+                    if(mode.equals("append"))Files.write(filePath, content.toString().getBytes(), StandardOpenOption.APPEND);
+                    else Files.write(filePath, content.toString().getBytes());
+
                     System.out.println("The modification as been done");
                 }catch(IOException e){
                     System.out.println("This cannot be writin into the file. Please try again");
                 }
                 
-                step = 3;
-            }
+                step = Step.FILE_ACTION;
+                break;
 
-            else if(step == 6){
+                case RUN_FILE:
                 if (!selectedFile.endsWith(".java")) {
                     System.out.println("File is not a .java file.");
-                    step = 3;
+                    step = Step.FILE_ACTION;
                     continue;
                 }
                 try {
@@ -156,42 +206,46 @@ public class Editor {
                         String className = selectedFile.substring(0, selectedFile.length() - 5);
                         Process run = Runtime.getRuntime().exec("java -cp " + folderPath + " " + className);
                         java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.InputStreamReader(run.getInputStream()));
-                        String line;
+                        String linee;
                         System.out.println("--- Program Output ---");
-                        while ((line = reader.readLine()) != null) {
-                            System.out.println(line);
+                        while ((linee = reader.readLine()) != null) {
+                            System.out.println(linee);
                         }
                         System.out.println("----------------------");
                     }
                 } catch (Exception e) {
                     System.out.println("Error running Java file.");
                 }
-                step = 3;
-            }
+                step = Step.FILE_ACTION;
+                break;
 
-            else if(step == 7){
+                case DELETE_FILE:
                 System.out.println("Are you sure you want to delete '" + selectedFile + "'? (yes/no)");
-                String input = scanner.nextLine().trim().toLowerCase();
+                input = scanner.nextLine().trim().toLowerCase();
+
+                if(input.equals("exit")) System.exit(0);
 
                 if (input.equals("yes")) {
                     File file = new File(folderPath, selectedFile);
                     if (file.delete()) {
                         System.out.println("File deleted.");
-                        step = 1; 
+                        step = Step.BROWSE; 
                     } else {
                         System.out.println("Failed to delete file.");
-                        step = 3;
+                        step = Step.FILE_ACTION;
                     }
                 } else if (input.equals("no")) {
-                    step = 3;
+                    step = Step.FILE_ACTION;
                 } else {
                     System.out.println("Please answer 'yes' or 'no'.");
                 }
-            }
+                break;
 
-            else if(step == 8){
+                case RENAME_ITEM:
                 System.out.println("Write the new name:");
-                String input = scanner.nextLine().trim();
+                input = scanner.nextLine().trim();
+
+                if(input.equals("exit")) System.exit(0);
 
                 Path oldPath = Paths.get(folderPath, selectedFile);
                 Path newPath = Paths.get(folderPath, input);
@@ -200,7 +254,7 @@ public class Editor {
                 File newFile = new File(newPath.toString());
 
                 if(input.equals("back")){
-                    step = 3;
+                    step = selectedFile.contains(".") ? Step.FILE_ACTION : Step.FOLDER_ACTION;
                     continue;
                 }
 
@@ -211,24 +265,29 @@ public class Editor {
                     if (renamed) {
                         System.out.println("Renamed successfully.");
                         selectedFile = input;
-                        step = 3;
+                        step = selectedFile.contains(".") ? Step.FILE_ACTION : Step.FOLDER_ACTION;
                     } else {
                         System.out.println("Failed to rename it.");
                     }
                 }
-            }
 
-            else if(step == 9){
-               System.out.println("do u want to create a file or a folder");
-               System.out.println("Write `file` to create a file");
-               System.out.println("Write `folder` to create a folder");
-               String choice = scanner.nextLine().trim();
+                break;
+
+                case CREATE_ITEM:
+                System.out.println("do u want to create a file or a folder");
+                System.out.println("Write `file` to create a file");
+                System.out.println("Write `folder` to create a folder");
+                String choice = scanner.nextLine().trim();
+
+                if(choice.equals("exit")) System.exit(0);
                
-               if(choice.equals("file")){
+                if(choice.equals("file")){
                     System.out.println("Enter the name of the new file (include .txt or .java):");
-                    String input = scanner.nextLine().trim();
+                    input = scanner.nextLine().trim();
 
-                    Path filePath = Paths.get(folderPath, input);
+                    if(input.equals("exit")) System.exit(0);
+
+                    filePath = Paths.get(folderPath, input);
                     File file = new File(filePath.toString());
 
                     if (file.exists()) {
@@ -238,7 +297,7 @@ public class Editor {
                             boolean created = file.createNewFile();
                             if (created) {
                                 System.out.println("File created successfully.");
-                                step = 2;
+                                step = Step.BROWSE;
                             } else {
                                 System.out.println("File could not be created.");
                             }
@@ -248,12 +307,14 @@ public class Editor {
                     }
                }
 
-               else if(choice.equals("folder")){
+                else if(choice.equals("folder")){
                     System.out.println("Enter the name of the new folder:");
-                    String input = scanner.nextLine().trim();
+                    input = scanner.nextLine().trim();
+
+                    if(input.equals("exit")) System.exit(0);
 
                     Path path = Paths.get(folderPath, input); 
-                    File folder = new File(path.toString());
+                    folder = new File(path.toString());
 
                     if (folder.exists()) {
                         System.out.println("A folder with that name already exists.");
@@ -261,45 +322,49 @@ public class Editor {
                         boolean created = folder.mkdir();
                         if (created) {
                             System.out.println("Folder created successfully.");
-                            step = 2;
+                            step = Step.BROWSE;
                         } else {
                             System.out.println("Failed to create folder.");
                         }
                     }
-               }
+                }
 
-               else{
-                System.out.println("Plz write file or folder and anything else");
-               }
+                else{
+                System.out.println("Please write file or folder");
+                }
 
-            }
+                break;
 
-            else if(step == 10){
+                case FOLDER_ACTION:
                 System.out.println("Write `open` to enter this folder");
                 System.out.println("Write `rename` to rename the folder");
                 System.out.println("Write `delete` to delete the folder");
                 System.out.println("Write `back` to return");
 
-                String input = scanner.nextLine().trim();
+                input = scanner.nextLine().trim();
+
+                if(input.equals("exit")) System.exit(0);
 
                 if(input.equals("open")){
                     folderPath = folderPath + File.separator + selectedFile;
-                    step = 2;
+                    step = Step.BROWSE;
                 }
                 else if(input.equals("rename")){
-                    step = 8;
+                    step = Step.RENAME_ITEM;
                 }
                 else if(input.equals("delete")){
-                    step = 11;
+                    step = Step.DELETE_FOLDER;
                 }
                 else if(input.equals("back")){
-                    step = 2;
+                    step = Step.BROWSE;
                 }
-            }
+                break;
 
-            else if (step == 11) {
+                case DELETE_FOLDER:
                 System.out.println("Are you sure you want to delete the folder '" + selectedFile + "' and all its contents? (yes/no)");
-                String input = scanner.nextLine().trim().toLowerCase();
+                input = scanner.nextLine().trim().toLowerCase();
+
+                if(input.equals("exit")) System.exit(0);
 
                 if (input.equals("yes")) {
                     Path directory = Paths.get(folderPath, selectedFile);
@@ -310,17 +375,19 @@ public class Editor {
                             .forEach(File::delete);
                     
                         System.out.println("Folder deleted successfully.");
-                        step = 2;
+                        step = Step.BROWSE;
                     } catch (IOException e) {
                         System.out.println("An error occurred while deleting the folder.");
-                        step = 10; 
+                        step = Step.FOLDER_ACTION; 
                     }
                 } else if (input.equals("no")) {
-                    step = 10;
+                    step = Step.FOLDER_ACTION;
                 } else {
                     System.out.println("Please answer 'yes' or 'no'.");
                 }
-            }           
+                break;
+
+            }         
         }
     }
 }
